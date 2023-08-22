@@ -1,0 +1,50 @@
+kind: pipeline
+type: docker
+name: thief_music
+
+steps:
+  # 上传文件
+  - name: upload-file
+    image: appleboy/drone-scp
+    when:
+      branch: master
+      event: push
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      port: 2222
+      command_timeout: 2m
+      target: /root/Projects/thief_music
+      source:
+        - ./*
+
+  # 部署
+  - name: deploy
+    image: appleboy/drone-ssh
+    when:
+      branch: master
+      event: push
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      port: 2222
+      command_timeout: 2m
+      script:
+        - cd /root/Projects/thief_music
+        - docker build -t thief_music .
+        - |
+          if docker container ls -a -f name=thief_music | grep -q thief_music; then
+            docker stop thief_music
+            docker rm thief_music
+          else
+            echo "Container thief_music is not running, nothing to stop and remove."
+          fi
+        - docker run -d --name thief_music -p 7788:7788 thief_music
