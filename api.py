@@ -163,29 +163,28 @@ async def get_rank(
     """
     headers = {
         "Referer": "https://music.163.com/",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                      " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
     }
     url = f"https://music.163.com/api/playlist/detail?id={rank_id}"
 
-    # 缓存文件不存在，从网络获取榜单数据
+    # 尝试从网络获取最新数据
     response = requests.get(url, headers=headers)
-    # 如果请求code为-447 那么继续返回json
-    if response.status_code == -447:
-        return {"message": "response code is -447, local json data", "data": response.json()}
-    else:
+
+    if response.status_code == 200:
         # 检测是否含有带rank_id的缓存文件
         cached_data = read_cache(rank_id)
+
         if cached_data:
+            # 如果缓存数据存在，比较缓存数据与新数据的内容，如果不同则更新缓存
+            if cached_data != response.json():
+                write_cache(rank_id, response.json())
             return {"message": "local json data", "data": cached_data}
-
-
-    # 将榜单数据写入缓存文件
-    write_cache(rank_id, response.json())
-    print(response.json())
-    data = response.json()
-
-    return {"message": "Request Netease Cloud And Local Cache JSON Success", "data": data}
+        else:
+            # 如果缓存数据不存在，则将新数据写入缓存
+            write_cache(rank_id, response.json())
+            return {"message": "Request Netease Cloud And Local Cache JSON Success", "data": response.json()}
+    else:
+        return {"message": "Failed to fetch data from Netease Cloud API"}
 
 @app.get("/search_song_by_name")
 async def search_song_by_name(
