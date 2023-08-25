@@ -1,12 +1,12 @@
 import pymysql
-import untils
+import config
 import hashlib
 
-mysql_host = untils.mysql_host
-mysql_port = untils.mysql_port
-mysql_user = untils.mysql_user
-mysql_password = untils.mysql_password
-mysql_database = untils.mysql_database
+mysql_host = config.mysql_host
+mysql_port = config.mysql_port
+mysql_user = config.mysql_user
+mysql_password = config.mysql_password
+mysql_database = config.mysql_database
 
 # 创建连接
 con = pymysql.connect(host=mysql_host, user=mysql_user, password=mysql_password, port=mysql_port, charset="utf8",
