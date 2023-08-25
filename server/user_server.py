@@ -51,8 +51,8 @@ def login_user(username, password):
         with con.cursor() as cur:
             # 判断用户是否存在
             cur.execute("SELECT * FROM User WHERE username = %s", (username,))
-            if not cur.fetchone():
-                return {"status": 400, "msg": "User Not Exists"}
+            # if not cur.fetchone():
+            #     return {"status": 400, "msg": "User Not Exists"}
             user_row = cur.fetchone() # fetchone()返回的是元组
             if user_row:
                 password_column_index = [desc[0] for desc in cur.description].index("password")
