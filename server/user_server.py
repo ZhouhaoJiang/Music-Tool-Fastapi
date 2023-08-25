@@ -1,4 +1,6 @@
 import csv
+import traceback
+
 import pymysql
 import config
 import hashlib
@@ -48,10 +50,8 @@ def login_user(username, password):
     try:
         with con.cursor() as cur:
             # 判断用户是否存在
-            try:
-                cur.execute("SELECT * FROM User WHERE username = %s", (username,))
-            except Exception as e:
-                print(e)
+            cur.execute("SELECT * FROM User WHERE username = %s", (username,))
+            if not cur.fetchone():
                 return {"status": 400, "msg": "User Not Exists"}
             user_row = cur.fetchone() # fetchone()返回的是元组
             if user_row:
@@ -64,6 +64,7 @@ def login_user(username, password):
             else:
                 return {"status": 400, "msg": "User Not Exists"}
     except Exception as e:
+        traceback.print_exc()
         print(e)
         return {"status": 400, "msg": "Failed Login"}
 

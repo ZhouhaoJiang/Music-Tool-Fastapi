@@ -147,9 +147,9 @@ async def user_login(
     :return:
     """
     # 请求auth/token接口获取token
-    token_info = get_token(OAuth2PasswordRequestForm(username=username, password=password))
     login_info = login_user(username, password)
     if login_info['status'] == 200:
+        token_info = get_token(OAuth2PasswordRequestForm(username=username, password=password))
         return {"success": True, "message": "登陆成功", "token": token_info}
     else:
         return {"success": False, "message": login_info['msg']}
