@@ -11,7 +11,7 @@ mysql_database = config.mysql_database
 
 # 创建连接
 con = pymysql.connect(host=mysql_host, user=mysql_user, password=mysql_password, port=mysql_port, charset="utf8",
-                      database=mysql_database)
+                      database=mysql_database, connect_timeout=10)
 
 # md5加密
 def md5(password):
@@ -48,9 +48,16 @@ def login_user(username, password):
     try:
         with con.cursor() as cur:
             # 判断用户是否存在
-            if cur.execute("SELECT * FROM User WHERE username = %s", (username,)):
+            try:
+                cur.execute("SELECT * FROM User WHERE username = %s", (username,))
+            except Exception as e:
+                print(e)
+                return {"status": 400, "msg": "User Not Exists"}
+            user_row = cur.fetchone() # fetchone()返回的是元组
+            if user_row:
+                password_column_index = [desc[0] for desc in cur.description].index("password")
                 # 判断密码是否正确
-                if cur.execute("SELECT * FROM User WHERE username = %s AND password = %s", (username, password)):
+                if user_row[password_column_index] == password:
                     return {"status": 200, "msg": "Success Login"}
                 else:
                     return {"status": 400, "msg": "Password Error"}
@@ -59,4 +66,5 @@ def login_user(username, password):
     except Exception as e:
         print(e)
         return {"status": 400, "msg": "Failed Login"}
+
 

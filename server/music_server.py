@@ -10,7 +10,7 @@ mysql_database = config.mysql_database
 
 # 创建连接
 con = pymysql.connect(host=mysql_host, user=mysql_user, password=mysql_password, port=mysql_port, charset="utf8",
-                      database=mysql_database)
+                      database=mysql_database,connect_timeout=10)
 
 def save_search_music(music_id_json):
     music_info_all = music_id_json['data'][0]

@@ -122,10 +122,17 @@ async def user_register(
     :param email:
     :return:
     """
-    create_user(username, password)
-    # 获取Token
-    token_info = get_token(OAuth2PasswordRequestForm(username=username, password=password))
-    return {"success": True, "message": "注册成功", "token": token_info}
+    result = create_user(username, password)
+    if result["status"] == 200:
+        # 用户创建成功，获取 token 并返回成功响应
+        token_info = get_token(OAuth2PasswordRequestForm(username=username, password=password))
+        return {"success": True, "message": "注册成功", "token": token_info}
+    elif result["status"] == 400 and result["msg"] == "User Already Exists":
+        # 用户已存在，返回相应的错误响应
+        return {"success": False, "message": "用户已存在"}
+    else:
+        # 创建用户失败，返回相应的错误响应
+        return {"success": False, "message": "创建用户失败"}
 
 
 # 登陆
@@ -141,11 +148,11 @@ async def user_login(
     """
     # 请求auth/token接口获取token
     token_info = get_token(OAuth2PasswordRequestForm(username=username, password=password))
-    login_info = user_login(username, password)
-    if login_info:
+    login_info = login_user(username, password)
+    if login_info['status'] == 200:
         return {"success": True, "message": "登陆成功", "token": token_info}
     else:
-        return {"success": False, "message": "登陆失败"}
+        return {"success": False, "message": login_info['msg']}
 
 
 # 榜单获取
