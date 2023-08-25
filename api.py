@@ -151,8 +151,8 @@ async def user_login(
 # 榜单获取
 @app.get("/get_rank")
 async def get_rank(
-        rank_id: str = fastapi.Query(..., description="榜单类型"),
-        current_user=Depends(manager.get_current_user)):
+        rank_id: str = fastapi.Query(..., description="榜单类型")):
+        # current_user=Depends(manager.get_current_user)
     """
     :param rank_id:
     19723756 云音乐飙升榜
