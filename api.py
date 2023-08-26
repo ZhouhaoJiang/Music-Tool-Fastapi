@@ -205,27 +205,23 @@ async def search_song_by_name(
         "page": 1
     }
 
-    url = "https://sunpma.com/other/musicss/"
-
+    # url = "https://sunpma.com/other/musicss/"
+    url = "https://music.ghser.com/"
     # Headers for the POST request
     headers = {
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Origin": "https://sunpma.com",
-        "Referer": f"https://sunpma.com/other/musicss/?name={payload['input']}&type={payload['type']}",
-        "Sec-Ch-Ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
-        "Sec-Ch-Ua-Mobile": "?0",
-        "Sec-Ch-Ua-Platform": "\"macOS\"",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-        "X-Requested-With": "XMLHttpRequest"
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "sec-ch-ua": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-requested-with": "XMLHttpRequest"
     }
     # 将所有 headers 的值用 'utf-8' 进行编码
-    headers = {key: value.encode('utf-8') for key, value in headers.items()}
+    # headers = {key: value.encode('utf-8') for key, value in headers.items()}
 
     # Making the POST request
     response = requests.post(url, data=payload, headers=headers)
@@ -254,25 +250,23 @@ async def search_song_by_id(
         "page": 1
     }
     headers = {
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Origin": "https://sunpma.com",
-        "Referer": f"https://sunpma.com/other/musicss/?id={payload['input']}&type=netease",
-        "Sec-Ch-Ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
-        "Sec-Ch-Ua-Mobile": "?0",
-        "Sec-Ch-Ua-Platform": "\"macOS\"",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-        "X-Requested-With": "XMLHttpRequest"
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "sec-ch-ua": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-requested-with": "XMLHttpRequest"
     }
 
-    url = "https://sunpma.com/other/musicss/"
+    # url = "https://sunpma.com/other/musicss/"
+    url = "https://music.ghser.com/"
+
     # Making the POST request
-    response = requests.post(url, data=payload, headers=headers)
+    response = requests.post(url, data=payload, headers=headers, timeout=10)
 
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
