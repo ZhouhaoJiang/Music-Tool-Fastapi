@@ -11,6 +11,7 @@ from fastapi_login import LoginManager
 from server.user_server import *
 from server.rank_data import *
 from server.music_server import *
+from fake_useragent import UserAgent
 
 env = os.environ
 app = FastAPI()
@@ -100,9 +101,10 @@ def get_token(data: OAuth2PasswordRequestForm = Depends()):
 @app.get('/token/verify_user')
 def get_current_user(current_user=Depends(manager.get_current_user)):
     if current_user:
-        return {"status":200 ,"success": True, "message": "Validated successfully"}
+        return {"status": 200, "success": True, "message": "Validated successfully"}
     else:
-        return {"status":400 ,"success": False, "message": "Invalid token"}
+        return {"status": 400, "success": False, "message": "Invalid token"}
+
 
 # @app.get('/protected')
 # def protected_route(user=Depends(manager)):
@@ -159,7 +161,7 @@ async def user_login(
 @app.get("/get_rank")
 async def get_rank(
         rank_id: str = fastapi.Query(..., description="榜单类型")):
-        # current_user=Depends(manager.get_current_user)
+    # current_user=Depends(manager.get_current_user)
     """
     :param rank_id:
     19723756 云音乐飙升榜
@@ -168,16 +170,20 @@ async def get_rank(
     2884035 云音乐原创榜
     :return:
     """
+    ua = UserAgent()
     headers = {
         "Referer": "https://music.163.com/",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
+        "User-Agent": ua.random
     }
     url = f"https://music.163.com/api/playlist/detail?id={rank_id}"
 
     # 尝试从网络获取最新数据
     response = requests.get(url, headers=headers)
+    json_data = response.json()
 
-    if response.status_code == 200:
+    if json_data['code'] != 200:
+        return {"message": "Failed to fetch data from Netease Cloud API", "data": read_cache(rank_id)}
+    else:
         # 检测是否含有带rank_id的缓存文件
         cached_data = read_cache(rank_id)
 
@@ -190,8 +196,7 @@ async def get_rank(
             # 如果缓存数据不存在，则将新数据写入缓存
             write_cache(rank_id, response.json())
             return {"message": "Request Netease Cloud And Local Cache JSON Success", "data": response.json()}
-    else:
-        return {"message": "Failed to fetch data from Netease Cloud API"}
+
 
 @app.get("/search_song_by_name")
 async def search_song_by_name(
@@ -242,7 +247,7 @@ async def search_song_by_name(
 async def search_song_by_id(
         music_id: str = fastapi.Query(..., description="歌曲id"),
         # current_user=Depends(manager.get_current_user)
-        ):
+):
     payload = {
         "input": music_id,
         "filter": "id",
@@ -283,9 +288,7 @@ async def search_song_by_id(
         return {"message": "failed", "data": []}
 
 
-
-
 if __name__ == '__main__':
     host = env.get("HOST") if env.get("HOST") is not None else "0.0.0.0"
-    port = int(env.get("PORT")) if env.get("PORT") is not None else 7888
+    port = int(env.get("PORT")) if env.get("PORT") is not None else 8000
     uvicorn.run(app='api:app', host=host, port=port, reload=True)

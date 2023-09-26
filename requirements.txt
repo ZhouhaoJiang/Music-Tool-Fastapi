@@ -4,3 +4,4 @@ pymysql==1.1.0
 Requests==2.31.0
 requests_html==0.10.0
 uvicorn==0.23.2
+python-multipart==0.0.6
